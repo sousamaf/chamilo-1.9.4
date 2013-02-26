@@ -1,0 +1,103 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Chamilo Server Dependencies</title>
+    <link rel="stylesheet" href="../main/css/base.css" type="text/css" media="screen,projection" />
+    <link rel="stylesheet" href="default.css" type="text/css" media="screen,projection" />
+    <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </a>
+            <a class="brand" href="index.html">Chamilo - Documentation</a>
+            <div class="nav-collapse">
+            <ul class="nav">
+                <li><a href="index.html">Home</a></li>
+                <li ><a href="readme.html">About</a></li>
+                <li ><a href="license.html">License</a></li>            
+                <li><a href="credits.html">Credits</a></li>            
+                <li class="active"><a href="dependencies.html">Dependencies</a></li>            
+                <li><a href="changelog.html">Changelog</a></li>
+            </ul>        
+            </div><!--/.nav-collapse -->
+        </div>
+    </div>
+</div>
+<div class="container">
+<ul class="breadcrumb">
+    <li>
+        <a href="index.html">Documentation</a>
+        <span class="divider">/</span>
+    </li>    
+    <li>Dependencies</li>
+</ul>
+<h1>Chamilo - Server Dependencies</h1>
+
+<h2>Introduction</h2>
+<p>In the ever-evoluting web environment, Chamilo has to rely on 
+state-of-the-art third-party software in order to provide you with useful and 
+practical features. Some of this third-party software usually come bundled with
+your operating system, but some don't. This means that if that software is
+not installed on your Chamilo server, along with Chamilo, you might not enjoy 
+the best possible experience with your Chamilo platform. To avoid this problem,
+most of the sofware we used is bundled into a typical Chamilo install.</p>
+<p>
+However, if such a third-party software is too big to be included, or if it 
+doesn't make sense to include it for whatever reason, you must make sure it is 
+installed on your system. This is the goal of this list: to help you keep a 
+track of what software is needed and, as much as possible, where to get the 
+required information to install it.</p>
+
+<a name="dependencies"></a>
+<h2>Dependencies - client-side</h2>
+<ul>
+  <li>Any modern browser (IE6 *excluded*). Safari is known to have small issues with the WYSIWYG editor.</li>
+  <li>Optional: Flash plugin (only required for a few features)</li>
+</ul>
+<h2>Dependencies - server-side</h2>
+<ul>
+  <li> Apache 2+</li>
+  <li> PHP 5.3 or 5.4 with MySQL bindings and php-gd extension to allow Chamilo to resize pictures. The 
+  new components we have included from the Symfony framework highly depend on namespaces, a feature that appeared in PHP 5.3.0+</li>
+  <li> MySQL 5.1+ or any version of MariaDB database server</li>
+  <li>php5-intl</li>
+  <li>php5-curl (only required for a feature in the links tool)</li>
+  <li>php5-mcrypt (only required for a feature in the survey tool)</li>
+</ul><br />
+<a name="included_dependencies"></a>
+<h2>Included Dependencies</h2>
+<ul>
+  <li>EZpdf and MPDF</li>
+  <li>FCKEditor (previously HTMLArea) </li>
+  <li>FormValidator </li>
+  <li>iCalCreator</li>
+  <li>kSes </li>
+  <li>MIMETex </li>
+  <li>MP3Player </li>
+  <li>PCLZip </li>
+  <li>PEAR::HTML_Common </li>
+  <li>PEAR::HTML_QuickForm </li>
+  <li>PEAR::HTML_Table</li>
+  <li>PEAR::OLE</li>
+  <li>PEAR::Pager</li>
+  <li>PEAR::Spreadsheet_Excel_Writer</li>
+  <li>PECL</li>
+  <li>PHPMailer </li>
+  <li>WCAG_Rendering</li>
+  <li>xajax </li>
+  <li>jQuery</li>
+</ul>
+</div>
+<hr />
+    <a href="http://validator.w3.org/check?uri=referer"><img src="http://www.w3.org/Icons/valid-xhtml10-blue" alt="Valid XHTML 1.0 Transitional" style="margin: 1em; float: right;" height="31" width="88" /></a>
+	<a href="http://jigsaw.w3.org/css-validator/">
+		<img src="http://jigsaw.w3.org/css-validator/images/vcss-blue" style="margin: 1em; float: right;" alt="Valid CSS" />
+	</a>
+</body>
+</html>

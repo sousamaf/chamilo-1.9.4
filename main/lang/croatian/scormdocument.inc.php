@@ -1,0 +1,65 @@
+<?php
+/*
+for more information: see languages.txt in the lang folder.
+*/
+$langChapter = "Poglavlje";
+$langDocumentList = "Popis svih dokumenata";
+$langOrganisationList = "Kazalo";
+$langEditTOC = "Uredi kazalo";
+$langEditDocument = "Uredi";
+$langCreateDocument = "Izradi dokument";
+$langMissingImagesDetected = "Otkrivene nedostajuće slike";
+$langPublish = "Objavi";
+$langScormcontentstudent = "Ovo je kolegij formata Scorm. Da biste ga pokrenuli kliknite ovdje: <input type=button name=scormbutton value='Pokreni !' onclick='openscorm()'>";
+$langScormcontent = "Ovo je sadržaj Scorm<br><input type=button name=scormbutton value='Pokreni !' onclick='openscorm()'>";
+$langDownloadAndZipEnd = "Datoteka zip učitana i dekomprimirana";
+$langZipNoPhp = "Datoteka zip ne smije sadržavati datoteke .PHP";
+$langGroupForumLink = "Forum skupine";
+$langGroupSpace = "Okruženje skupine";
+$langNotScormContent = "Ovo nije datoteka scorm zip!";
+$langNoText = "Molim upišite svoj tekst/sadržaj HTML-a";
+$langNoFileName = "Molim upišite ime datoteke";
+$langMaxFileSize = "Najveća veličina datoteke je";
+$langFileName = "Ime datoteke";
+$langFileError = "Datoteka za predaju nije valjana.";
+$langDown = "dolje";
+$langViMod = "Vidljivost izmijenjena";
+$langAddComment = "Dodaj/izmijeni opasku";
+$langImpossible = "Greška. Nemoguća operacija";
+$langNewDir = "Ime nove mape";
+$langTo = "u";
+$langNoSpace = "Učitavanje nije uspjelo. Prešli ste svoju maksimalnu kvotu ili nema dovoljno diskovnog prostora.";
+$langDownloadEnd = "Učitavanje dovršeno";
+$langFileExists = "Greška.<br>Već postoji datoteka s istim imenom";
+$langDocCopied = "Dokument preslikan";
+$langDocDeleted = "Dokument izbrisan";
+$langElRen = "Element preimenovan";
+$langDirMv = "Element premješten";
+$langComMod = "Opaska izmijenjena";
+$langRename = "Preimenuj";
+$langCopy = "Preslikaj sadržaj kolegija";
+$langNameDir = "Naziv mape";
+$langDownloadFile = "Učitavanje datoteke na poslužitelj";
+$learning_path_access = "kliknite 'izradi put učenja' kako biste izbrisali/izmijenili/prikazali/sakrili/izradili/dodali put učenja";
+$langRoot = "korijen";
+$langBuilder = "Program za izradu puteva učenja";
+$lang_edit_learnpath = "uredi put učenja";
+$lang_add_title_and_desc = "Uredi naslov i opis";
+$lang_add_learnpath = "Dodaj novi put učenja";
+$lang_learnpath_added = "Novi put učenja uspješno je izrađen. Pritiskom na križić možete mu dodati nova poglavlja.";
+$lang_delete_learnpath = "izbriši put učenja";
+$lang_learnpath_edited = "put učenja je uređen";
+$lang_learnpath_deleted = "put učenja je izbrisan";
+$lang_no_publish = "ne objavljuj";
+$lang_publish = "objavi";
+$lang_no_published = "neobjavljen";
+$lang_published = "objavljen";
+$lang_description = "opis";
+$lang_title = "naslov";
+$langScormBuilder = "Path builder - Program za izradu kolegija formata Scorm";
+$langCreateDoc = "Izradi dokument";
+$langOrganiseDocuments = "Izradi kazalo";
+$langUncompress = "dekomprimiraj datoteku (.zip) na serveru";
+$ExportShort = "Brzi prijenos";
+$progress = "Status napredovanja";
+?>

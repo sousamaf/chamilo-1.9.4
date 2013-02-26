@@ -1,0 +1,39 @@
+INSTALLATION 
+
+On Debian Lenny
+  Base install
+    apt-get  install php5-xapian
+    (you need version 1.x of Xapian here - check xapian.org for older Deb/Ub)
+    two bugs:
+      http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=493944
+      http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=493941
+    on dokeos root:
+      mkdir searchdb
+      chmod 777 searchdb (or equivalent)
+  Useful xapian development tools
+    apt-get install xapian-doc xapian-tools
+    (See delve command)
+
+
+On Ubuntu 8.10
+
+Chamilo 1.8.8 + XAPIAN in Ubuntu 10.10
+
+1. Activate the search module setting in main/admin/settings.php?category=Search
+2. Go to main/admin/specific_fields.php and Specific fields (Those are text fields that will be add in documents, exercises, links in order to index data)
+ 	i.e i.e. Author, Body part, Technology, Topic
+3. Go to main/admin/settings.php?category=Search and set a Specific field by default
+4. Install the Xapian module for PHP5 
+	sudo apt-get install php5-xapian
+5. Install the imagemagick modules
+    sudo apt-get install imagemagick
+    sudo apt-get install php5-imagick 
+6. In Chamilo root
+	mkdir searchdb
+    sudo chmod 777 searchdb
+7.  Useful Xapian development tools
+    sudo apt-get install xapian-doc xapian-tools
+8. Restart Apache
+9. Create a course and 2 *new* Learning paths for testing
+10.Edit the LPs created and add/edit the specific fields (i.e. Author, Body part, Technology, Topic)
+11.Go to the 
