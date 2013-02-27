@@ -38,6 +38,7 @@ require_once api_get_path(LIBRARY_PATH).'userportal.lib.php';
 
 api_block_anonymous_users(); // Only users who are logged in can proceed.
 
+//$syncRM = false;
 $syncRM = true;
 if($syncRM)
 { 
