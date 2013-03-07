@@ -766,7 +766,26 @@ class SocialManager extends UserManager {
             
             $html .= '<ul id="online_grid_container" class="thumbnails">';            
             foreach ($user_list as $uid) {
-                $user_info = api_get_user_info($uid);                
+                $user_info = api_get_user_info($uid);
+				
+				/*
+				 * Alteração para link direto para o chat e identificação do curso do usuário. Pedido do acadêmico: Francisco Lima. 
+				 * Realizado na versão 1.9.4 no dia 07/03/2013.
+				 * Marco e Thatiane.
+				 * 
+				 */
+				$campo = UserManager::get_extra_user_data_by_field($user_info['user_id'], "curso");
+				$user_info['curso'] = $campo['curso'];
+				$friends_id = SocialManager::get_friends($uid,"","", false);
+				$friends = array();
+				foreach ($friends_id as $f) {
+					$friends[] = $f['friend_user_id'];
+				}
+				$friend = in_array(api_get_user_id(), $friends);
+				$user_info['friend'] = $friend;
+				// Fim da alteração.
+				
+				  
                 //Anonymous users can't have access to the profile
                 if (!api_is_anonymous()) {
                     if (api_get_setting('allow_social_tool')=='true') {

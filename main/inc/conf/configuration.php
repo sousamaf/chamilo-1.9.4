@@ -60,7 +60,7 @@ $_configuration['user_personal_database']='chamilo187_chamilo_main';
  * Directory settings
  */
 // URL to the root of your Chamilo installation, e.g.: http://www.mychamilo.com/
-$_configuration['root_web']       = 'http://localhost/~marcosousa/chamilo-1.9.4/';
+$_configuration['root_web']       = 'http://10.10.1.248/~marcosousa/chamilo-1.9.4/';
 
 // Path to the webroot of system, example: /var/www/
 $_configuration['root_sys']       = '/Users/marcosousa/Sites/chamilo-1.9.4/';
