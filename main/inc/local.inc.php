@@ -284,12 +284,14 @@ if (!empty($_SESSION['_user']['user_id']) && !($login || $logout)) {
                                             $logging_in = true;
                                         } else {
                                             $loginFailed = true;
+											CatolicaDoTocantins::set_login_failed($uData['username'], "access_url_inactive");
                                             Session::erase('_uid');
                                             header('Location: '.api_get_path(WEB_PATH).'index.php?loginFailed=1&error=access_url_inactive');
                                             exit;
                                         }
                                     } else {
                                         $loginFailed = true;
+										CatolicaDoTocantins::set_login_failed($uData['username'], "access_url_inactive");
                                         Session::erase('_uid');
                                         header('Location: '.api_get_path(WEB_PATH).'index.php?loginFailed=1&error=access_url_inactive');
                                         exit;
@@ -310,6 +312,7 @@ if (!empty($_SESSION['_user']['user_id']) && !($login || $logout)) {
                                             event_login();
                                         } else {
                                             $loginFailed = true;
+											CatolicaDoTocantins::set_login_failed($uData['username'], "access_url_inactive");
                                             Session::erase('_uid');
                                             header('Location: '.api_get_path(WEB_PATH).'index.php?loginFailed=1&error=access_url_inactive');
                                             exit;
@@ -328,12 +331,14 @@ if (!empty($_SESSION['_user']['user_id']) && !($login || $logout)) {
                             }
                         } else {
                             $loginFailed = true;
+							CatolicaDoTocantins::set_login_failed($uData['username'], "account_expired");
                             Session::erase('_uid');
                             header('Location: '.api_get_path(WEB_PATH).'index.php?loginFailed=1&error=account_expired');
                             exit;
                         }
                     } else {
                         $loginFailed = true;
+						CatolicaDoTocantins::set_login_failed($uData['username'], "account_inactive");
                         Session::erase('_uid');
                         header('Location: '.api_get_path(WEB_PATH).'index.php?loginFailed=1&error=account_inactive');
                         exit;
@@ -341,6 +346,7 @@ if (!empty($_SESSION['_user']['user_id']) && !($login || $logout)) {
                 } else {
                     // login failed: username or password incorrect
                     $loginFailed = true;
+					CatolicaDoTocantins::set_login_failed($uData['username'], "user_password_incorrect");
                     Session::erase('_uid');
                     header('Location: '.api_get_path(WEB_PATH).'index.php?loginFailed=1&error=user_password_incorrect');
                     exit;
@@ -399,7 +405,8 @@ if (!empty($_SESSION['_user']['user_id']) && !($login || $logout)) {
                 }
             } //end if is_array($extAuthSource)
             if ($loginFailed) { //If we are here username given is wrong
-                header('Location: '.api_get_path(WEB_PATH).'index.php?loginFailed=1&error=user_password_incorrect');
+            	CatolicaDoTocantins::set_login_failed($login, "username_wrong");
+			    header('Location: '.api_get_path(WEB_PATH).'index.php?loginFailed=1&error=user_password_incorrect');
             }
         } //end else login failed
     } elseif (api_get_setting('sso_authentication') === 'true' && !in_array('webservices', explode('/', $_SERVER['REQUEST_URI']))) {

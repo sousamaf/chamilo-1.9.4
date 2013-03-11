@@ -517,6 +517,31 @@ class CatolicaDoTocantins {
 		return $result;
 	}
 
+	/*
+	 * Adiciona o registro de uma tentativa falha de login.
+	 * Armazena username e datetime.
+	 * Impacto: database.constants.inc.php, local.inc.php
+	 * Tabela:
+	 * 
+	   CREATE TABLE `track_e_login_failed` (
+		  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+		  `username` varchar(100) DEFAULT '',
+		  `login_date` datetime DEFAULT '0000-00-00 00:00:00',
+		  `login_ip` varchar(39) DEFAULT NULL,
+		  `type_error` varchar(40) DEFAULT NULL,
+		  PRIMARY KEY (`id`)
+		) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=
+	 */
+	public static function set_login_failed($username, $type_error)
+	{
+		$table_login_failed = Database :: get_main_table(TABLE_STATISTIC_TRACK_E_LOGIN_FAILED);
+		$ip = api_get_real_ip();
+		$username = Database::escape_string($username);
+		$type_error = Database::escape_string($type_error);
+		$sql = "INSERT INTO " . $table_login_failed . " (username, login_date, login_ip, type_error) VALUES ('" . $username . "', NOW(), '". $ip ."', '". $type_error ."')";
+		Database::query($sql);
+	}
+	
 	public function debug($valor, $parar = false)
 	{
 		echo "<pre>";

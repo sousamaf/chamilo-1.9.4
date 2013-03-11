@@ -348,3 +348,5 @@ define('TABLE_GRADE_AGRUPAMENTO', 'grade_agrupamento');
 define('TABLE_GRADE_MATRICULADOS', 'grade_matriculados');
 define('TABLE_GRADE_PROFESSORES', 'grade_professores');
 
+// Log de falhas de autenticação.
+define('TABLE_STATISTIC_TRACK_E_LOGIN_FAILED', 'track_e_login_failed');
