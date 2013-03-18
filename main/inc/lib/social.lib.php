@@ -777,16 +777,7 @@ class SocialManager extends UserManager {
 				$campo = UserManager::get_extra_user_data_by_field($user_info['user_id'], "curso");
 				$user_info['curso'] = $campo['curso'];
 				$user_friend_relation = SocialManager::get_relation_between_contacts(api_get_user_id(), $uid);
-/*
-				$friends_id = SocialManager::get_friends($uid,"","", false);
-				$friends = array();
-				foreach ($friends_id as $f) {
-					$friends[] = $f['friend_user_id'];
-				}
-				$friend = in_array(api_get_user_id(), $friends);
-				$user_info['friend'] = $friend;
 				// Fim da alteração.
-	*/			
 				  
                 //Anonymous users can't have access to the profile
                 if (!api_is_anonymous()) {
@@ -821,7 +812,7 @@ class SocialManager extends UserManager {
 					    if ($user_id != api_get_user_id()) {
 					            $options = array('onclick' => "javascript:chatWith('".$uid."', '".Security::remove_XSS($name)."', '".$user_info['user_is_online_in_chat']."')");
 					            $chat_icon = $status_icon; 
-					            $chat .=   Display::url($chat_icon.'&nbsp;&nbsp;',  'javascript:void(0);', $options);
+					            $chat =  Display::url($chat_icon.'&nbsp;&nbsp;',  'javascript:void(0);', $options);
 								$name = $chat . '<a href="'.$url.'">'.$user_status.$name.'</a><br>';
 					    }
 					} else {
