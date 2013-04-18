@@ -350,3 +350,5 @@ define('TABLE_GRADE_PROFESSORES', 'grade_professores');
 
 // Log de falhas de autenticação.
 define('TABLE_STATISTIC_TRACK_E_LOGIN_FAILED', 'track_e_login_failed');
+// Log de concordancia com avaliacao institucional - cpa
+define('TABLE_STATISTIC_TRACK_E_AVALIACAO_HELP', 'track_e_avaliacao_help');

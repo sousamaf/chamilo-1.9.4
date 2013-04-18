@@ -66,7 +66,7 @@ class View {
    	 */
 	public function render() {
 		$content = $this->render_template();
-		$target = $this->tool_path.$this->layout.'.php';
+		$target = $this->tool_path.$this->layout.'.php'; 
 		if (file_exists($target)) {           
 			require_once $target;
 		} else {

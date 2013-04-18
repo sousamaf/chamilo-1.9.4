@@ -971,6 +971,8 @@ class Autoload
         $result['vtimezone'] = '/main/inc/lib/icalcreator/iCalcreator.class.php';
         $result['vtodo'] = '/main/inc/lib/icalcreator/iCalcreator.class.php';
         $result['xhtdoc'] = '/main/inc/lib/xht.lib.php';
+		$result['CatolicaDoTocantins'] = '/main/inc/lib/catolicaDoTocantins.lib.php';
+		$result['AvaliacaoInstitucionalCPA'] = '/main/inc/lib/avaliacao_institucional.lib.php';
 
 
         return $result;

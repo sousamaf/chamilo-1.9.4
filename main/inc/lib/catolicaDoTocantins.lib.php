@@ -215,7 +215,7 @@ class CatolicaDoTocantins {
 			CatolicaDoTocantins::ct_syncGruposProfessores($user_id, $coordenacoes);
 		}
 	}
-	private function ct_isTeacherOnRegularCourse($cpf)
+	public function ct_isTeacherOnRegularCourse($cpf)
 	{
 		$table_grade_professores = Database::get_main_table(TABLE_GRADE_PROFESSORES);
 		$sql = "SELECT count(CourseCode) AS qtd FROM ".$table_grade_professores." WHERE TeacherOfficialCode = '".$cpf."' AND semestre = '".SEMESTRE."'";
@@ -541,6 +541,18 @@ class CatolicaDoTocantins {
 		$sql = "INSERT INTO " . $table_login_failed . " (username, login_date, login_ip, type_error) VALUES ('" . $username . "', NOW(), '". $ip ."', '". $type_error ."')";
 		Database::query($sql);
 	}
+
+	public static function is_category_created($course_id)
+	{
+		// @TODO: make 
+		$table_login_failed = Database :: get_main_table(TABLE_STATISTIC_TRACK_E_LOGIN_FAILED);
+		$ip = api_get_real_ip();
+		$username = Database::escape_string($username);
+		$type_error = Database::escape_string($type_error);
+		$sql = "INSERT INTO " . $table_login_failed . " (username, login_date, login_ip, type_error) VALUES ('" . $username . "', NOW(), '". $ip ."', '". $type_error ."')";
+		Database::query($sql);
+	}
+
 	
 	public function debug($valor, $parar = false)
 	{
