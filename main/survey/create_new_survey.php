@@ -22,8 +22,8 @@ $this_section = SECTION_COURSES;
 // Including additional libraries
 /** @todo check if these are all needed */
 /** @todo check if the starting / is needed. api_get_path probably ends with an / */
-//require_once api_get_path(LIBRARY_PATH).'survey.lib.php';
-require_once 'survey.lib.php';
+require_once api_get_path(LIBRARY_PATH).'survey.lib.php';
+//require_once 'survey.lib.php';
 require_once api_get_path(LIBRARY_PATH).'fileManage.lib.php';
 require_once api_get_path(SYS_CODE_PATH).'gradebook/lib/gradebook_functions.inc.php';
 
@@ -180,7 +180,7 @@ $surveytypes[1] = get_lang('Conditional');
 if ($_GET['action'] == 'add') {
     $form->addElement('hidden', 'survey_type', 0);
     require_once api_get_path(LIBRARY_PATH).'surveymanager.lib.php';
-    $survey_tree = new SurveyTree();
+    $survey_tree = new SurveyTree(); 
     $list_surveys = $survey_tree->createList($survey_tree->surveylist);
     $list_surveys[0] = '';
     $form->addElement('select', 'parent_id', get_lang('ParentSurvey'), $list_surveys);
@@ -256,7 +256,7 @@ $form->addRule(array('start_date', 'end_date'), get_lang('StartDateShouldBeBefor
 $form->setDefaults($defaults);
 
 // The validation or display
-if ($form->validate()) {
+if ($form->validate()) { 
     // Exporting the values
     $values = $form->exportValues();
     // Storing the survey

@@ -119,10 +119,10 @@ class survey_manager {
 		$table_survey 	= Database :: get_course_table(TABLE_SURVEY);
 		$shared_survey_id = 0;
 
-        if(!isset($course_id) && empty($course_id))
+		if(!isset($course_id) && empty($course_id))
         	$course_id = api_get_course_int_id();
 
-		if (!$values['survey_id'] || !is_numeric($values['survey_id'])) { 
+		if (!$values['survey_id'] || !is_numeric($values['survey_id'])) {
 			// Check if the code doesn't soon exists in this language
 			$sql = 'SELECT 1 FROM '.$table_survey.'
 			        WHERE c_id = '.$course_id.' AND code="'.Database::escape_string($values['survey_code']).'" AND lang="'.Database::escape_string($values['survey_language']).'"';
@@ -223,7 +223,6 @@ class survey_manager {
 				}
 			}
 			//$course_id = api_get_course_int_id();
-			
 			$sql = "INSERT INTO $table_survey (c_id, code, title, subtitle, author, lang, avail_from, avail_till, is_shared, template, intro, surveythanks, creation_date, anonymous".$additional['columns'].", session_id) VALUES (
 						$course_id,
 						'".Database::escape_string(strtolower(generate_course_code(api_substr($values['survey_code'],0))))."',
@@ -240,7 +239,7 @@ class survey_manager {
 						'".date('Y-m-d H:i:s')."',
 						'".Database::escape_string($values['anonymous'])."'".$additional['values'].",
 						".intval($_SESSION['id_session'])."
-						)";  
+						)";
 			$result = Database::query($sql);
 			$survey_id = Database::insert_id();
 			if ($survey_id > 0) {
@@ -731,7 +730,6 @@ class survey_manager {
 
 			if(!isset($course_id) && empty($course_id))
 	        	$course_id = api_get_course_int_id();
-
 
 			if (!$empty_answer) {
 				// Table definitions
@@ -1284,6 +1282,10 @@ class survey_manager {
     }
 
     static function generate_survey_link($survey_id, $course_id, $session_id, $group_id) {
+        $code = self::generate_survey_hash($survey_id, $course_id, $session_id, $group_id);
+        return api_get_path(WEB_CODE_PATH).'survey/link.php?h='.$code.'&i='.$survey_id.'&c='.intval($course_id).'&s='.intval($session_id).'&g='.$group_id;
+    }
+    static function generate_survey_link2($survey_id, $course_id, $session_id, $group_id) {
         $code = self::generate_survey_hash($survey_id, $course_id, $session_id, $group_id);
         return api_get_path(WEB_CODE_PATH).'survey2/link.php?h='.$code.'&i='.$survey_id.'&c='.intval($course_id).'&s='.intval($session_id).'&g='.$group_id;
     }
@@ -3881,6 +3883,86 @@ class SurveyUtil {
 		return $counter; // Number of invitations sent
 	}
 
+	/**
+	 * This function saves all the invitations of course users and additional users in the database
+	 * and sends the invitations by email
+	 *
+	 * @param	array	Users array can be both a list of course uids AND a list of additional emailaddresses
+	 * @param 	string	Title of the invitation, used as the title of the mail
+	 * @param 	string	Text of the invitation, used as the text of the mail.
+	 * 				 The text has to contain a **link** string or this will automatically be added to the end
+	 *
+	 * @author Patrick Cool <patrick.cool@UGent.be>, Ghent University
+     * @author Julio Montoya - Adding auto-generated link support
+	 * @version January 2007
+	 *
+	 */
+	static function save_invitations2($users_array, $invitation_title, $invitation_text, $reminder = 0, $sendmail = 0, $remindUnAnswered = 0) {
+
+		if (!is_array($users_array)) return 0; // Should not happen
+		// Getting the survey information
+		$survey_data = survey_manager::get_survey($_GET['survey_id']);
+
+
+		$survey_invitations = SurveyUtil::get_invitations($survey_data['survey_code']);
+		$already_invited = SurveyUtil::get_invited_users($survey_data['code']);
+
+		// Remind unanswered is a special version of remind all reminder
+		$exclude_users = array();
+		if ($remindUnAnswered == 1) { // Remind only unanswered users
+			$reminder = 1;
+			$exclude_users = survey_manager::get_people_who_filled_survey($_GET['survey_id']);
+		}
+
+		$counter = 0;  // Nr of invitations "sent" (if sendmail option)
+		$course_id = api_get_course_int_id();
+
+        $session_id = api_get_session_id();
+
+		foreach ($users_array as $key=>$value) {
+			if (!isset($value) || $value == '') continue;
+			// Skip user if reminding only unanswered people
+			if (in_array($value, $exclude_users)) continue;
+			// Get the unique invitation code if we already have it
+			if ($reminder == 1 && array_key_exists($value, $survey_invitations)) {
+				$invitation_code = $survey_invitations[$value]['invitation_code'];
+			} else {
+				$invitation_code = md5($value.microtime());
+			}
+			$new_user = false; // User not already invited
+			// Store the invitation if user_id not in $already_invited['course_users'] OR email is not in $already_invited['additional_users']
+			$addit_users_array = isset($already_invited['additional_users']) && !empty($already_invited['additional_users']) ? explode(';', $already_invited['additional_users']) : array();
+
+			$my_alredy_invited = ($already_invited['course_users'] == null) ? array() : $already_invited['course_users'];
+			if ((is_numeric($value) && !in_array($value, $my_alredy_invited)) || (!is_numeric($value) && !in_array($value, $addit_users_array))) {
+				$new_user = true;
+				if (!array_key_exists($value, $survey_invitations)) {
+                    $params = array(
+                        'c_id' => $course_id,
+                        'session_id' => $session_id,
+                        'user' => $value,
+                        'survey_code' => $survey_data['code'],
+                        'invitation_code' => $invitation_code,
+                        'invitation_date' => api_get_utc_datetime()
+                    );
+					self::save_invitation($params);
+				}
+			}
+			// Send the email if checkboxed
+			if (($new_user || $reminder == 1) && $sendmail != 0) {
+				// Make a change for absolute url
+				if (isset($invitation_text)) {
+                    $invitation_text = api_html_entity_decode($invitation_text, ENT_QUOTES);
+					$invitation_text = str_replace('src="../../', 'src="'.api_get_path(WEB_PATH), $invitation_text);
+					$invitation_text = trim(stripslashes($invitation_text));
+				}
+				SurveyUtil::send_invitation_mail2($value, $invitation_code, $invitation_title, $invitation_text);
+				$counter++;
+			}
+		}
+		return $counter; // Number of invitations sent
+	}
+
 
     static function save_invitation($params) {
         // Database table to store the invitations data
@@ -3890,7 +3972,6 @@ class SurveyUtil {
         }
         return false;
     }
-
 	/**
 	 * Send the invitation by mail.
 	 *
@@ -3899,6 +3980,69 @@ class SurveyUtil {
 	 * @return	void
 	 */
 	static function send_invitation_mail($invitedUser, $invitation_code, $invitation_title, $invitation_text) {
+		global $_user, $_course, $_configuration;
+
+		$portal_url = api_get_path(WEB_CODE_PATH);
+		if ($_configuration['multiple_access_urls']) {
+			$access_url_id = api_get_current_access_url_id();
+			if ($access_url_id != -1) {
+				$url = api_get_access_url($access_url_id);
+				$portal_url = $url['url'];
+			}
+		}
+
+		// Replacing the **link** part with a valid link for the user
+		$survey_link = api_get_path(WEB_CODE_PATH).'survey/fillsurvey.php?course='.$_course['code'].'&invitationcode='.$invitation_code;
+		$text_link = '<a href="'.$survey_link.'">'.get_lang('ClickHereToAnswerTheSurvey')."</a><br />\r\n<br />\r\n".get_lang('OrCopyPasteTheFollowingUrl')." <br />\r\n ".$survey_link;
+
+		$replace_count = 0;
+		$full_invitation_text = api_str_ireplace('**link**', $text_link ,$invitation_text, $replace_count);
+		if ($replace_count < 1) {
+			$full_invitation_text = $full_invitation_text."<br />\r\n<br />\r\n".$text_link;
+		}
+
+        // Sending the mail
+		$sender_name  = api_get_person_name($_user['firstName'], $_user['lastName'], null, PERSON_NAME_EMAIL_ADDRESS);
+		$sender_email = $_user['mail'];
+        $sender_user_id = api_get_user_id();
+
+		$replyto = array();
+		if (api_get_setting('survey_email_sender_noreply') == 'noreply') {
+			$noreply = api_get_setting('noreply_email_address');
+			if (!empty($noreply)) {
+				$replyto['Reply-to'] = $noreply;
+				$sender_name = $noreply;
+				$sender_email = $noreply;
+                $sender_user_id = null;
+			}
+		}
+
+		// Optionally: finding the e-mail of the course user
+		if (is_numeric($invitedUser)) {
+			$table_user = Database :: get_main_table(TABLE_MAIN_USER);
+			$sql = "SELECT firstname, lastname, email FROM $table_user WHERE user_id='".Database::escape_string($invitedUser)."'";
+			$result = Database::query($sql);
+			$row = Database::fetch_array($result);
+			$recipient_email = $row['email'];
+			$recipient_name = api_get_person_name($row['firstname'], $row['lastname'], null, PERSON_NAME_EMAIL_ADDRESS);
+
+            MessageManager::send_message($invitedUser, $invitation_title, $full_invitation_text, null, null, null, null, null, null, $sender_user_id);
+
+		} else {
+			/** @todo check if the address is a valid email	 */
+			$recipient_email = $invitedUser;
+            @api_mail_html($recipient_name, $recipient_email, $invitation_title, $full_invitation_text, $sender_name, $sender_email, $replyto);
+		}
+	}
+
+	/**
+	 * Send the invitation by mail.
+	 *
+	 * @param	invitedUser - the userId (course user) or emailaddress of additional user
+	 * $param	   $invitation_code - the unique invitation code for the URL
+	 * @return	void
+	 */
+	static function send_invitation_mail2($invitedUser, $invitation_code, $invitation_title, $invitation_text) {
 		global $_user, $_course, $_configuration;
 
 		$portal_url = api_get_path(WEB_CODE_PATH);

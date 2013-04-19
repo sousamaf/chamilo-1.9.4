@@ -6,12 +6,13 @@
  * @author Marco Antonio Firmino de Sousa <marco.volare@gmail.com>
  * @package chamilo.avaliacao_institucional
  */
-require_once (dirname(__FILE__) . '/database.lib.php');
-require_once (dirname(__FILE__) . '/usermanager.lib.php');
-require_once api_get_path(SYS_CODE_PATH).'survey2/survey.lib.php';
+require_once (dirname(__FILE__) . '/database.lib.php'); 
+require_once (dirname(__FILE__) . '/usermanager.lib.php'); 
+require_once api_get_path(LIBRARY_PATH).'survey.lib.php';
+//require_once api_get_path(SYS_CODE_PATH).'survey2/survey2.lib.php';
 
 define('ENQUETEALUNO', "20131aluno");
-define('ENQUETEPROFESSOR', "20131professores");
+define('ENQUETEPROFESSOR', "20131professor");
 define('ENQUETEALUNOPROFESSOR',"8"); // survey_id
 
 /*
@@ -35,7 +36,7 @@ define('ENQUETEALUNOPROFESSOR',"8"); // survey_id
 	 */
 	public function __construct(){}
 
-	public function isActiveStudent($cpf)
+	public static function isActiveStudent($cpf)
 	{
 		// @TODO: filtrar disciplinas de estagio e TCC.
 		$table_grade_matriculados = Database::get_main_table(TABLE_GRADE_MATRICULADOS);
@@ -164,12 +165,18 @@ define('ENQUETEALUNOPROFESSOR',"8"); // survey_id
 
 	public function display_avaliacao_help($user_id)
 	{
+		$cpf = CatolicaDoTocantins::ct_getCpfFromUserid($user_id);
 		echo '<div style="margin-top:20px">';
 		echo '<div><strong>'.get_lang('HelpAvaliacaoInstitucionalTitulo').'</strong></div><br />';
 		echo '<form name="dashboard_list" method="post" action="index.php?action=help_done">';
-		echo 'help';
+		if(self::isActiveTeacher($cpf)){
+			echo get_lang('HelpAvaliacaoInstitucionalMensagemDocente');
+		}
+		else {
+			echo get_lang('HelpAvaliacaoInstitucionalMensagemDiscente');
+		}
 		echo '<br />';
-		if(!AvaliacaoInstitucional::isViewedHelp($user_id))
+		if(!self::isViewedHelp($user_id))
 			echo '<button class="save" type="submit" name="submit_dashboard_list" value="'.get_lang('HelpConfirmarParticipacao').'">'.get_lang('HelpConfirmarParticipacao').'</button></form>';
 		echo '</div>';
 	}
@@ -238,7 +245,7 @@ define('ENQUETEALUNOPROFESSOR',"8"); // survey_id
 				foreach ($structure['questions'] as $question) {
 					$question['question_id'] = ''; 
 					$question['survey_id'] = $structure['survey_id'];
-					$new_question = survey_manager::save_question($structure, $question, $course_id);	
+					$new_question = survey_manager::save_question($question, $structure, $course_id);	
 				}
 				
 			}

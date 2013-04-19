@@ -30,7 +30,8 @@ require_once api_get_path(LIBRARY_PATH).'catolicaDoTocantins.lib.php';
 
 // Including additional libraries
 //require_once api_get_path(LIBRARY_PATH).'survey.lib.php';
-require_once 'survey.lib.php';
+//require_once 'survey2.lib.php';
+require_once api_get_path(LIBRARY_PATH).'survey.lib.php';
 
 // Breadcrumbs
 if (!empty($_user)) {

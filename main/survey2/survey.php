@@ -21,7 +21,8 @@ $current_course_tool  = TOOL_SURVEY;
 api_protect_course_script(true);
 
 // Including additional libraries
-require_once 'survey.lib.php';
+require_once api_get_path(LIBRARY_PATH).'survey.lib.php';
+//require_once 'survey2.lib.php';
 
 /** @todo this has to be moved to a more appropriate place (after the display_header of the code)*/
 // Coach can't view this page

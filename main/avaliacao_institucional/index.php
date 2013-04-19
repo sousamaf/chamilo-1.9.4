@@ -12,9 +12,9 @@ $language_file = array ('index', 'tracking', 'userInfo', 'gradebook', 'avaliacao
 $cidReset = true;
 
 // including files 
-require_once '../inc/global.inc.php';
+require_once '../inc/global.inc.php'; 
 require_once api_get_path(LIBRARY_PATH).'catolicaDoTocantins.lib.php';
-require_once api_get_path(LIBRARY_PATH).'avaliacao_institucional.lib.php';
+require_once api_get_path(LIBRARY_PATH).'avaliacao_institucional.lib.php'; 
 require_once api_get_path(LIBRARY_PATH).'dashboard.lib.php';
 require_once api_get_path(LIBRARY_PATH).'app_view.php';
 require_once 'avaliacao_institucional_controller.php';

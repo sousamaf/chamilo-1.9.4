@@ -22,8 +22,8 @@ $this_section = SECTION_COURSES;
 // Including additional libraries
 /** @todo check if these are all needed */
 /** @todo check if the starting / is needed. api_get_path probably ends with an / */
-//require_once api_get_path(LIBRARY_PATH).'survey.lib.php';
-require_once 'survey.lib.php';
+require_once api_get_path(LIBRARY_PATH).'survey.lib.php';
+//require_once 'survey2.lib.php';
 require_once api_get_path(LIBRARY_PATH).'fileManage.lib.php';
 require_once api_get_path(SYS_CODE_PATH).'gradebook/lib/gradebook_functions.inc.php';
 
@@ -47,7 +47,7 @@ $htmlHeadXtra[] = '<script type="text/javascript">
 	</script>';
 
 // Database table definitions
-$table_survey = Database :: get_course_table(TABLE_SURVEY);
+$table_survey = Database :: get_course_table(TABLE_SURVEY); 
 $table_user = Database :: get_main_table(TABLE_MAIN_USER);
 $table_course = Database :: get_main_table(TABLE_MAIN_COURSE);
 $table_gradebook_link = Database :: get_main_table(TABLE_MAIN_GRADEBOOK_LINK);
@@ -178,9 +178,9 @@ $surveytypes[0] = get_lang('Normal');
 $surveytypes[1] = get_lang('Conditional');
 
 if ($_GET['action'] == 'add') {
-    $form->addElement('hidden', 'survey_type', 0);
+    $form->addElement('hidden', 'survey_type', 0); 
     require_once api_get_path(LIBRARY_PATH).'surveymanager.lib.php';
-    $survey_tree = new SurveyTree();
+    $survey_tree = new SurveyTree(); 
     $list_surveys = $survey_tree->createList($survey_tree->surveylist);
     $list_surveys[0] = '';
     $form->addElement('select', 'parent_id', get_lang('ParentSurvey'), $list_surveys);

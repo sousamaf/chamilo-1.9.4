@@ -13,7 +13,8 @@
 
 function check_download_survey($course, $invitation, $doc_url) {
 
-	require_once 'survey.lib.php';
+	//require_once 'survey2.lib.php';
+	require_once api_get_path(LIBRARY_PATH).'survey.lib.php';
 
 	// Getting all the course information
 	$_course = CourseManager::get_course_information($course);

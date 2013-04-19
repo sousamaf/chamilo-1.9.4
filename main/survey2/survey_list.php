@@ -26,7 +26,8 @@ $current_course_tool  = TOOL_SURVEY;
 api_protect_course_script(true);
 
 // Including additional libraries
-require_once 'survey.lib.php';
+require_once api_get_path(LIBRARY_PATH).'survey.lib.php';
+//require_once 'survey2.lib.php';
 
 // Tracking
 event_access_tool(TOOL_SURVEY);

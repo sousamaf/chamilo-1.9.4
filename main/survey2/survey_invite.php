@@ -20,7 +20,8 @@ $language_file = 'survey';
 require '../inc/global.inc.php';
 
 // Including additional libraries
-require_once 'survey.lib.php';
+require_once api_get_path(LIBRARY_PATH).'survey.lib.php';
+//require_once 'survey2.lib.php';
 require_once api_get_path(LIBRARY_PATH).'mail.lib.inc.php';
 
 $this_section = SECTION_COURSES;
@@ -187,7 +188,7 @@ if ($form->validate()) {
     // Save the invitation mail
 	SurveyUtil::save_invite_mail($values['mail_text'], $values['mail_title'], !empty($survey_data['invite_mail']));
 	// Saving the invitations for the course users
-	$count_course_users = SurveyUtil::save_invitations($values['course_users'], $values['mail_title'],
+	$count_course_users = SurveyUtil::save_invitations2($values['course_users'], $values['mail_title'],
     $values['mail_text'], $values['resend_to_all'], $values['send_mail'], $values['remindUnAnswered']);
 	// Saving the invitations for the additional users
 	$values['additional_users'] = $values['additional_users'].';'; 	// This is for the case when you enter only one email
@@ -196,7 +197,7 @@ if ($form->validate()) {
 	for ($i = 0; $i < count($additional_users); $i++) {
 		$additional_users[$i] = trim($additional_users[$i]);
 	}
-	$counter_additional_users = SurveyUtil::save_invitations($additional_users, $values['mail_title'],
+	$counter_additional_users = SurveyUtil::save_invitations2($additional_users, $values['mail_title'],
     $values['mail_text'], $values['resend_to_all'], $values['send_mail'], $values['remindUnAnswered']);
 	// Updating the invited field in the survey table
 	SurveyUtil::update_count_invited($survey_data['code']);

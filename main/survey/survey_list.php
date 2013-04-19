@@ -20,14 +20,15 @@ if (!isset ($_GET['cidReq'])){
 
 // Including the global initialization file
 require_once '../inc/global.inc.php';
+
 $this_section = SECTION_COURSES;
 $current_course_tool  = TOOL_SURVEY;
 
 api_protect_course_script(true);
 
 // Including additional libraries
-require_once 'survey.lib.php';
-
+//require_once 'survey.lib.php';
+require_once api_get_path(LIBRARY_PATH).'survey.lib.php';
 // Tracking
 event_access_tool(TOOL_SURVEY);
 
@@ -64,7 +65,7 @@ Display::display_introduction_section('survey', 'left');
 // Action handling: searching
 if (isset ($_GET['search']) && $_GET['search'] == 'advanced') {
 	SurveyUtil::display_survey_search_form();
-}
+} 
 // Action handling: deleting a survey
 if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['survey_id'])) {
 	// Getting the information of the survey (used for when the survey is shared)
@@ -138,9 +139,9 @@ echo '<a href="'.api_get_self().'?'.api_get_cidreq().'&amp;search=advanced">'.Di
 echo '</div>';
 
 // Load main content
-if (api_is_course_coach() && $extend_rights_for_coachs == 'false') {
+if (api_is_course_coach() && $extend_rights_for_coachs == 'false') { 
 	SurveyUtil::display_survey_list_for_coach();
-} else {
+} else { 
 	SurveyUtil::display_survey_list();
 }
 

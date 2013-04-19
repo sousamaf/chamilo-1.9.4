@@ -21,7 +21,7 @@ $user_id = api_get_user_id();
 $cpf = CatolicaDoTocantins::ct_getCpfFromUserid($user_id);
 $link_help_view = $link_list_view = $link_report_view = null;
 
-	$link_help_view = '<a href="'.api_get_self().'?view=help">'.Display::return_icon('info.png',get_lang('HelpAvaliacaoInstitucionalTitulo'),'',ICON_SIZE_MEDIUM).'</a>';
+$link_help_view = '<a href="'.api_get_self().'?view=help">'.Display::return_icon('info.png',get_lang('HelpAvaliacaoInstitucionalTitulo'),'',ICON_SIZE_MEDIUM).'</a>';
 if(AvaliacaoInstitucional::isViewedHelp($user_id))
 	$link_list_view = '<a href="'.api_get_self().'?view=list">'.Display::return_icon('view_text.png',get_lang('ActionListaDeAvaliacao'),'',ICON_SIZE_MEDIUM).'</a>';
 if(AvaliacaoInstitucional::isViewedHelp($user_id) && AvaliacaoInstitucional::isAllSurveyDone($user_id, $cpf))

@@ -68,7 +68,7 @@ class SurveyTree {
 			{
 				$refs[ $survey['parent_id'] ]['children'][ $survey['survey_id'] ] = &$thisref;
 			}
-		}
+		} 
         $this->surveylist = $list;
         $this->plainsurveylist = $plain_array;
     }

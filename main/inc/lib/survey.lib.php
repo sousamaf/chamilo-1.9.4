@@ -112,14 +112,14 @@ class survey_manager {
 	 * @author Patrick Cool <patrick.cool@UGent.be>, Ghent University
 	 * @version February 2007
 	 */
-	static function store_survey($values, $course_id = '') {
+	public static function store_survey($values, $course_id = '') {
 		global $_user;
 
-		// Table definitions
+		// Table defnitions
 		$table_survey 	= Database :: get_course_table(TABLE_SURVEY);
 		$shared_survey_id = 0;
 
-		if(!isset($course_id) && empty($course_id))
+		if(isset($course_id) && empty($course_id))
         	$course_id = api_get_course_int_id();
 
 		if (!$values['survey_id'] || !is_numeric($values['survey_id'])) {
@@ -378,7 +378,7 @@ class survey_manager {
 	 */
 	static function delete_survey($survey_id, $shared = false, $course_id = '') {
 		// Database table definitions
-        if (empty($course_id)) {
+        if (isset($course_id) && empty($course_id)) {
             $course_id = api_get_course_int_id();
         }
 
@@ -658,7 +658,7 @@ class survey_manager {
 		$tbl_survey_question 			= Database :: get_course_table(TABLE_SURVEY_QUESTION);
 		$table_survey_question_option 	= Database :: get_course_table(TABLE_SURVEY_QUESTION_OPTION);
 
-        if(!isset($course_id) && $course_id < 1)
+        if(isset($course_id) && $course_id < 1)
         	$course_id = api_get_course_int_id();
 
 		// Getting the information of the question
@@ -695,8 +695,9 @@ class survey_manager {
 	 * @version January 2007
 	 */
 
-	public static function save_question($survey_data, $form_content, $course_id = '') {
-		//global $survey_data;
+	public static function save_question($form_content, $survey_data, $course_id = '') {
+		if(!isset($survey_data))
+			global $survey_data;
 		if (strlen($form_content['question']) > 1) { // Checks lenght of the question
 			$empty_answer = false;
 
@@ -728,7 +729,7 @@ class survey_manager {
 			}
 			$additional = array();
 
-			if(!isset($course_id) && empty($course_id))
+			if(isset($course_id) && empty($course_id))
 	        	$course_id = api_get_course_int_id();
 
 			if (!$empty_answer) {
@@ -1030,7 +1031,7 @@ class survey_manager {
 	 * @todo writing the update statement when editing a question
 	 */
 	public static function save_question_options($form_content, $survey_data, $course_id = '') {
-        if(!isset($course_id) && empty($course_id))
+        if(isset($course_id) && empty($course_id))
         	$course_id = api_get_course_int_id();
 
 		// A percentage question type has options 1 -> 100

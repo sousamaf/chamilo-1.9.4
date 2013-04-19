@@ -16,7 +16,7 @@ $language_file = 'survey';
 
 // Including the global initialization file
 require '../inc/global.inc.php';
-require_once 'survey.lib.php';
+require_once api_get_path(LIBRARY_PATH).'survey.lib.php';
 
 $this_section = SECTION_COURSES;
 

@@ -32,7 +32,7 @@ class Template {
     var $force_plugin_load = false;
 
     function __construct($title = '', $show_header = true, $show_footer = true, $show_learnpath = false, $hide_global_chat = false, $load_plugins = true) {
-
+    	 
         //Page title
         $this->title = $title;
         $this->show_learnpath = $show_learnpath;
@@ -118,14 +118,14 @@ class Template {
         $this->assign('style', $this->style);
 
         //Chamilo plugins
-        if ($this->show_header) {
-            if ($this->load_plugins) {
+        if ($this->show_header) { 
+            if ($this->load_plugins) { 
 
                 $this->plugin = new AppPlugin();
 
                 //1. Showing installed plugins in regions
                 $plugin_regions = $this->plugin->get_plugin_regions();
-                foreach ($plugin_regions as $region) {
+                foreach ($plugin_regions as $region) { 
                     $this->set_plugin_region($region);
                 }
 
