@@ -162,6 +162,85 @@ define('ENQUETEALUNOPROFESSOR',"8"); // survey_id
 		}
 		return true;
 	}
+	
+	public function report_get_list_of_questions($survey_code)
+	{
+		$table_survey = Database::get_course_table(TABLE_SURVEY);
+		$table_survey_question = Database::get_course_table(TABLE_SURVEY_QUESTION);
+		
+		$sql = "SELECT survey.c_id, survey.survey_id, question.question_id, question.survey_question, question.type FROM ".$table_survey." as survey, ".$table_survey_question." as question WHERE code = '".$survey_code."'
+			AND question.type <> 'comment'
+			AND survey.c_id = question.c_id
+			AND survey.survey_id = question.survey_id";
+		$sql_result = Database::query($sql);
+		$dados = array();
+		while($dado = Database::fetch_array($sql_result))
+		{
+			$d['c_id'] = $dado['c_id'];
+			$d['survey_id'] = $dado['survey_id'];
+			$d['question_id'] = $dado['question_id'];
+			$d['survey_question'] = $dado['survey_question'];
+			$d['type'] = $dado['type'];
+			
+			$dados[] = $d;
+		}
+		return $dados;
+	}
+
+	// @TODO: trabalhando aqui.
+	public function report_get_list_of_questions_options_score($course_id, $survey_id, $question_id)
+	{
+		$table_survey_question_option = Database::get_course_table(TABLE_SURVEY_QUESTION_OPTION);
+		
+		$sql = "SELECT q_option.question_option_id as o_id, q_option.option_text as text FROM $table_survey_question_option as q_option 
+				WHERE q_option.c_id = $course_id
+				AND q_option.survey_id = $survey_id
+				AND q_option.question_id = $question_id"; 
+		$sql_result = Database::query($sql);
+		$dados = array();
+		while($dado = Database::fetch_array($sql_result))
+		{
+			$d['o_id'] = $dado['o_id'];
+			$d['text'] = $dado['text'];
+			$sql2 = "SELECT a.option_id, a.value, count(a.value) FROM c_survey_answer as a
+					WHERE a.c_id = $course_id
+					AND a.survey_id = $survey_id
+					AND a.question_id = $question_id
+					AND a.option_id = 
+					group by a.option_id, a.value";
+			
+			$dados[] = $d;
+		}
+		return $dados;
+			
+	}
+	
+	public function report_get_qtd_unsurvey($curso)
+	{
+		$table_grade_matriculados = Database::get_main_table(TABLE_GRADE_MATRICULADOS);
+		$table_main_user = Database::get_main_table(TABLE_MAIN_USER);
+		$sql = "SELECT m.nome, m.matricula, m.cpf, u.user_id FROM ".$table_grade_matriculados." as m, ".$table_main_user." as u where m.semestre = '".SEMESTRE."'
+			AND m.cursocodigo = '".$curso."'
+			AND m.cpf = u.official_code
+			group by u.user_id
+			order by m.nome";
+
+		$sql_result = Database::query($sql);
+		$dados = array();
+		while($dado = Database::fetch_array($sql_result))
+		{
+			if(!self::isAllSurveyDone($dado['user_id'], $dado['cpf']))
+			{
+				$d['user_id'] = $dado['user_id'];
+				$d['cpf'] = $dado['cpf'];
+				$d['matricula'] = $dado['matricula'];
+				$d['nome'] = $dado['nome'];
+				
+				$dados[] = $d;
+			}
+		}
+		return $dados;		
+	}
 
 	public function display_avaliacao_help($user_id)
 	{
@@ -263,6 +342,24 @@ define('ENQUETEALUNOPROFESSOR',"8"); // survey_id
 			echo Display::return_message($orientacao_inicial, 'error', false);
 		}
 		echo Display::return_message($message, 'warning', false);
+	}
+
+	public function display_report_teacher_courses($course_code)
+	{
+		$cpf = CatolicaDoTocantins::ct_getCpfFromUserid($user_id);
+		echo '<div style="margin-top:20px">';
+		echo '<div><strong>'.get_lang('HelpAvaliacaoInstitucionalTitulo').'</strong></div><br />';
+		echo '<form name="dashboard_list" method="post" action="index.php?action=help_done">';
+		if(self::isActiveTeacher($cpf)){
+			echo get_lang('HelpAvaliacaoInstitucionalMensagemDocente');
+		}
+		else {
+			echo get_lang('HelpAvaliacaoInstitucionalMensagemDiscente');
+		}
+		echo '<br />';
+		if(!self::isViewedHelp($user_id))
+			echo '<button class="save" type="submit" name="submit_dashboard_list" value="'.get_lang('HelpConfirmarParticipacao').'">'.get_lang('HelpConfirmarParticipacao').'</button></form>';
+		echo '</div>';
 	}
 
  }

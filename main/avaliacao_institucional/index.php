@@ -30,7 +30,7 @@ $this_section = SECTION_REPORTS;
 unset($_SESSION['this_section']);//for hmtl editor repository
 
 // get actions
-$actions = array('listing', 'help_done');
+$actions = array('listing', 'help_done', 'report');
 $action = 'listing';
 if (isset($_GET['action']) && in_array($_GET['action'],$actions)) {
 	$action = $_GET['action'];

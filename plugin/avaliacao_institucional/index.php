@@ -12,7 +12,8 @@ if($user_id > 2)
 {
 	$cpf = CatolicaDoTocantins::ct_getCpfFromUserid($user_id);
 	
-	if( (AvaliacaoInstitucional::isActiveTeacher($cpf) && !AvaliacaoInstitucional::isSurveyDone($user_id, ENQUETEPROFESSOR)) OR ((AvaliacaoInstitucional::isActiveStudent($cpf) && !AvaliacaoInstitucional::isAllSurveyDone($user_id, $cpf)))){
+	if( true) //(AvaliacaoInstitucional::isActiveTeacher($cpf) && !AvaliacaoInstitucional::isSurveyDone($user_id, ENQUETEPROFESSOR)) OR ((AvaliacaoInstitucional::isActiveStudent($cpf) && !AvaliacaoInstitucional::isAllSurveyDone($user_id, $cpf))))
+	{
 		echo '<div class="well">';
 	    echo "<h2>Avaliação Institucional</h2>";  
 		

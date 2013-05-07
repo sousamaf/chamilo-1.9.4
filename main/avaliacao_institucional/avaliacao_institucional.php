@@ -40,7 +40,8 @@ echo '</div>';
 // block dashboard view
 if (isset($avaliacao_view) && $avaliacao_view == 'report') {
 
-	if (count($blocks) > 0) {
+	if ((AvaliacaoInstitucional::isActiveTeacher($cpf) && AvaliacaoInstitucional::isSurveyDone($user_id, ENQUETEPROFESSOR)) OR ((AvaliacaoInstitucional::isActiveStudent($cpf) && AvaliacaoInstitucional::isAllSurveyDone($user_id, $cpf))))
+	{
 		$columns = array();
 		// group content html by number of column
 		if (is_array($blocks)) {
@@ -54,14 +55,20 @@ if (isset($avaliacao_view) && $avaliacao_view == 'report') {
 		}
 
 		echo '<div id="columns">';
-		if (count($columns) > 0) {
-			$columns_name = array_keys($columns);
-			// blocks for column 1
-			if (in_array('column_1',$columns_name)) {
+		$survey_code = '202N10A2020262';
+		$survey_questions = AvaliacaoInstitucional::report_get_list_of_questions($survey_code);
+		
+		if (count($survey_questions) > 0) {
 				echo '<ul id="column1" class="column">';
-					foreach ($columns['column_1'] as $content) {
-						echo $content;
+				foreach ($survey_questions as $survey_question) {
+					Display::display_normal_message($survey_question['survey_question'], false);
+					 
+					if($survey_question['type'] == 'score')
+					{
+						$option = AvaliacaoInstitucional::report_get_list_of_questions_options_score($survey_question['c_id'], $survey_question['survey_id'], $survey_question['question_id']);
+						echo $option['text'];
 					}
+				}
 				echo '</ul>';
 			} else {
 				echo '<ul id="column1" class="column">';
@@ -81,8 +88,7 @@ if (isset($avaliacao_view) && $avaliacao_view == 'report') {
 				echo '&nbsp;';
 				echo '</ul>';
 			}
-		}
-		echo '</div>';
+			echo '</div>';
 	} else {
 		echo '<div style="margin-top:20px;">'.get_lang('ReportNaoHaDadosSuficientes').'</div>';
 	}
