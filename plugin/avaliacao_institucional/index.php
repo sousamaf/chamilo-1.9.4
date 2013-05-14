@@ -8,11 +8,11 @@ require_once api_get_path(LIBRARY_PATH).'avaliacao_institucional.lib.php';
 
 $user_id = api_get_user_id();
 
-if($user_id > 2)
+if(true)
 {
 	$cpf = CatolicaDoTocantins::ct_getCpfFromUserid($user_id);
 	
-	if( true) //(AvaliacaoInstitucional::isActiveTeacher($cpf) && !AvaliacaoInstitucional::isSurveyDone($user_id, ENQUETEPROFESSOR)) OR ((AvaliacaoInstitucional::isActiveStudent($cpf) && !AvaliacaoInstitucional::isAllSurveyDone($user_id, $cpf))))
+	if( AvaliacaoInstitucional::isActiveTeacher($cpf) && AvaliacaoInstitucional::isSurveyDone($user_id, ENQUETEPROFESSOR)) // OR ((AvaliacaoInstitucional::isActiveStudent($cpf) && !AvaliacaoInstitucional::isAllSurveyDone($user_id, $cpf))))
 	{
 		echo '<div class="well">';
 	    echo "<h2>Avaliação Institucional</h2>";  

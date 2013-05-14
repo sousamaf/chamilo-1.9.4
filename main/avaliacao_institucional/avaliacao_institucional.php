@@ -17,6 +17,11 @@ $views = array('help', 'report', 'list');
 if(isset($_GET['view']) && in_array($_GET['view'], $views)){
 	$avaliacao_view = $_GET['view'];
 }
+$survey_code = "";
+if(isset($_GET['survey'])){
+	$survey_code = $_GET['survey'];
+}
+
 $user_id = api_get_user_id();
 $cpf = CatolicaDoTocantins::ct_getCpfFromUserid($user_id);
 $link_help_view = $link_list_view = $link_report_view = null;
@@ -39,35 +44,55 @@ echo '</div>';
 
 // block dashboard view
 if (isset($avaliacao_view) && $avaliacao_view == 'report') {
-
-	if ((AvaliacaoInstitucional::isActiveTeacher($cpf) && AvaliacaoInstitucional::isSurveyDone($user_id, ENQUETEPROFESSOR)) OR ((AvaliacaoInstitucional::isActiveStudent($cpf) && AvaliacaoInstitucional::isAllSurveyDone($user_id, $cpf))))
+	$surveys = array();
+	if ((AvaliacaoInstitucional::isActiveTeacher($cpf) && AvaliacaoInstitucional::isSurveyDone($user_id, ENQUETEPROFESSOR)) )//OR ((AvaliacaoInstitucional::isActiveStudent($cpf) && AvaliacaoInstitucional::isAllSurveyDone($user_id, $cpf))))
 	{
-		$columns = array();
+		$avaliacoes = array(); 
+		$link_avaliacao = array();
+		$link_avaliacao_coord = array();
+		$info = array();
+		$avaliacoes = AvaliacaoInstitucional::getCoursesOfTeacher($cpf); 
+		$avaliacoes_coord = AvaliacaoInstitucional::getCoordenacoesResponsaveis($user_id);
 		// group content html by number of column
-		if (is_array($blocks)) {
-			$tmp_columns = array();
-			foreach ($blocks as $block) {
-				$tmp_columns[] = $block['column'];
-				if (in_array($block['column'], $tmp_columns)) {
-					$columns['column_'.$block['column']][] = $block['content_html'];
-				}
+		if (is_array($avaliacoes)) {
+			foreach ($avaliacoes as $avaliacao) {
+				$surveys[] = $avaliacao['turma'].$avaliacao['codigo'];
+				$info[$avaliacao['turma'].$avaliacao['codigo']] = "Curso: " . $avaliacao['curso'] . "<br>Disciplina: " . $avaliacao['disciplina'] . "<br>Turma/Código: " . $avaliacao['turma']. "/". $avaliacao['codigo'];
+				$link_avaliacao[] = '<a href="'.api_get_self().'?view=report&survey='.$avaliacao['turma'].$avaliacao['codigo'].'">'.$avaliacao['curso']. ': '.$avaliacao['disciplina'].' ('.$avaliacao['turno'].')</a><br>';
+			}
+		}
+		if(is_array($avaliacoes_coord))
+		{
+			foreach ($avaliacoes_coord as $avaliacao_coord) {
+				$surveys[] = $avaliacao_coord['turma'].$avaliacao_coord['codigo'];
+				$info[$avaliacao_coord['turma'].$avaliacao_coord['codigo']] = "Curso: " . $avaliacao_coord['curso'] . "<br>Disciplina: " . $avaliacao_coord['disciplina'] ."<br>Professor: ".$avaliacao_coord['professor']. "<br>Turma/Código: " . $avaliacao_coord['turma']. "/". $avaliacao_coord['codigo'];
+				$link_avaliacao_coord[] = '<a href="'.api_get_self().'?view=report&survey='.$avaliacao_coord['turma'].$avaliacao_coord['codigo'].'">'.$avaliacao_coord['curso']. ': '.$avaliacao_coord['disciplina'].' ('.$avaliacao_coord['turno'].')</a><br>'; 
 			}
 		}
 
 		echo '<div id="columns">';
-		$survey_code = '202N10A2020262';
+		if(empty($survey_code) || !in_array($survey_code, $surveys)){
+			$survey_code = $surveys[0];
+		} 
+				
 		$survey_questions = AvaliacaoInstitucional::report_get_list_of_questions($survey_code);
-		
-		if (count($survey_questions) > 0) {
+			// blocks for column 2
+			if (count($survey_questions) > 0) {
+				// blocks for column 1
 				echo '<ul id="column1" class="column">';
-				foreach ($survey_questions as $survey_question) {
-					Display::display_normal_message($survey_question['survey_question'], false);
-					 
-					if($survey_question['type'] == 'score')
+					if(count($link_avaliacao) > 0)
 					{
-						$option = AvaliacaoInstitucional::report_get_list_of_questions_options_score($survey_question['c_id'], $survey_question['survey_id'], $survey_question['question_id']);
-						echo $option['text'];
+						Display::display_warning_message("Disciplinas de sua responsabilidade:", false);
 					}
+					foreach ($link_avaliacao as $content) {
+						echo $content;
+					}
+				if(count($link_avaliacao_coord) > 1)
+				{
+					Display::display_warning_message("Disciplinas de seus professores:", false);
+					foreach ($link_avaliacao_coord as $content_coord) {
+						echo $content_coord;
+					}					
 				}
 				echo '</ul>';
 			} else {
@@ -75,13 +100,41 @@ if (isset($avaliacao_view) && $avaliacao_view == 'report') {
 				echo '&nbsp;';
 				echo '</ul>';
 			}
-			// blocks for column 2
-			if (in_array('column_2',$columns_name)) {
-				// blocks for column 1
+
+		if (count($survey_questions) > 0) {
 				echo '<ul id="column2" class="column">';
-					foreach ($columns['column_2'] as $content) {
-						echo $content;
+				$count = 0;
+				
+				Display::display_normal_message($info[$survey_code], false);
+				foreach ($survey_questions as $survey_question) {
+				
+					Display::display_warning_message($survey_question['survey_question'], false);
+					
+					if($survey_question['type'] == 'score')
+					{
+						$option = AvaliacaoInstitucional::report_get_list_of_questions_options_score($survey_question['c_id'], $survey_question['survey_id'], $survey_question['question_id']);
+						foreach ($option as $op) {
+							$dados = $op['text'] . "<br>";
+							
+							// @TODO: remover POG htmlHeadXtra
+							$htmlHeadXtra = AvaliacaoInstitucional::display_graph_pizza_score($op['score'], $count);
+							foreach ($htmlHeadXtra as $value) {
+								echo $value;
+							}
+							$dados .= Display::page_subheader3("Distribuição:").'<div id="chart'.$count.'"></div>';
+							Display::display_normal_message($dados, false);
+							$count++;
+						}
 					}
+					if($survey_question['type'] == 'open')
+					{
+						$respostas = AvaliacaoInstitucional::report_get_list_of_open_answered($survey_question['c_id'], $survey_question['survey_id'], $survey_question['question_id']);
+						
+						foreach ($respostas as $v) {
+							Display::display_normal_message($v['opiniao'], false);
+						}
+					}
+				}
 				echo '</ul>';
 			} else {
 				echo '<ul id="column2" class="column">';

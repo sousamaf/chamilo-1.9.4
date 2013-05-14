@@ -262,11 +262,48 @@ class CatolicaDoTocantins {
 		unset($sql_resultc);
 		return $return_codigos;
 	}
+
+	 public function ct_getAllCoordenacoes()
+	 {
+		// Inclusão NADIME e Coordenações.
+		// disciplinas sem agrupamentos
+		$table_grade_professores = Database::get_main_table(TABLE_GRADE_PROFESSORES);
+		
+		$sql = "SELECT DISTINCT CONCAT('CC', m.Course) as codigo, m.Course curso
+                        FROM " . $table_grade_professores . " as m 
+                        WHERE m.semestre = '".SEMESTRE."'";
+
+		$sql_result = Database::query($sql);
+		$return_codigos = array();
+		while ($course_code = Database::fetch_array($sql_result)) {
+				$codigos['codigo'] = $course_code['codigo'];
+				$codigos['curso']= $course_code['curso'];
+				$return_codigos[] = $codigos;
+		}
+		$codigos['codigo'] = "CPA";
+		$codigos['curso'] = "ALL";
+		$return_codigos[] = $codigos;
+
+		$codigos['codigo'] = "NUPAD";
+		$codigos['curso'] = "ALL";
+		$return_codigos[] = $codigos;
+
+		$codigos['codigo'] = "NADIME";
+		$codigos['curso'] = "ALL";
+		$return_codigos[] = $codigos;
+				
+		unset($sql_result);
+		return $return_codigos;
+		// Fim da inclusão CPA, NUPAD, NADIME e Coordenações
+
+	 } 
+
+
 	/*
 	 * Retorna a lista de coordenações que o professor faz parte.
 	 */
 	 
-	 private function ct_getCoordenacoes($cpf)
+	 public function ct_getCoordenacoes($cpf)
 	 {
 		// Inclusão NADIME e Coordenações.
 		// disciplinas sem agrupamentos

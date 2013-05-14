@@ -20,6 +20,7 @@ require_once api_get_path(LIBRARY_PATH).'app_view.php';
 require_once 'avaliacao_institucional_controller.php';
 
 
+
 // protect script
 api_block_anonymous_users();
 
@@ -31,14 +32,13 @@ unset($_SESSION['this_section']);//for hmtl editor repository
 
 // get actions
 $actions = array('listing', 'help_done', 'report');
-$action = 'listing';
+$action = 'report';
 if (isset($_GET['action']) && in_array($_GET['action'],$actions)) {
 	$action = $_GET['action'];
 }
 
 // course description controller object
 $avaliacao_institucional_controller = new AvaliacaoInstitucionalController();
-
 
 if (isset($_GET['path'])) {
 	$data = $_GET['path'];

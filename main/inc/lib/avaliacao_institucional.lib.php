@@ -52,6 +52,87 @@ define('ENQUETEALUNOPROFESSOR',"8"); // survey_id
 		}
 	}
 
+	public function getCoursesOfTeacher($cpf)
+	{
+		$table_grade_matriculados = Database::get_main_table(TABLE_GRADE_MATRICULADOS);
+		$table_grade_curricular = Database::get_main_table(TABLE_GRADE_CURRICULAR);
+		$table_grade_professores = Database::get_main_table(TABLE_GRADE_PROFESSORES);
+		
+		$sql = "SELECT c.disciplinaCodigo as codigo, p.CourseTurma as turma, c.disciplinaNome as disciplina, p.CourseHorario as turno, c.cursoNome as curso, p.TeacherName as professor FROM
+				".$table_grade_matriculados." as m, 
+				".$table_grade_curricular." as c,
+				".$table_grade_professores." as p
+				WHERE p.TeacherOfficialCode = '".$cpf."'
+				and m.disciplinacodigo = c.disciplinaCodigo
+				and p.CourseCode = c.disciplinaCodigo
+				and m.disciplinaturma = p.CourseTurma
+				and m.semestre = '".SEMESTRE."'
+				and c.estagio = 0
+				GROUP BY p.CourseTurma 
+				ORDER BY c.disciplinaCodigo"; 
+		$sql_result = Database::query($sql);
+		$dados = array();
+		while($dado = Database::fetch_array($sql_result))
+		{
+			$d['codigo'] = $dado['codigo'];
+			$d['turma'] = $dado['turma'];
+			$d['disciplina'] = $dado['disciplina'];
+			$d['turno'] = $dado['turno'];
+			$d['curso'] = $dado['curso'];
+			$d['professor'] = $dado['professor'];
+			
+			$dados[] = $d;
+		}
+		return $dados;
+	}
+
+	public function getCoursesOfResponsaveis($course)
+	{
+		$table_grade_matriculados = Database::get_main_table(TABLE_GRADE_MATRICULADOS);
+		$table_grade_curricular = Database::get_main_table(TABLE_GRADE_CURRICULAR);
+		$table_grade_professores = Database::get_main_table(TABLE_GRADE_PROFESSORES);
+		
+		$condicao = "";
+		if(is_array($course))
+		{
+			if(in_array("ALL", $course))
+			{
+				$condicao = " 1 ";
+			} else {
+				$condicao = "p.Course IN ('".implode("','",$course)."')";
+			}
+		}
+		
+		$sql = "SELECT c.disciplinaCodigo as codigo, p.CourseTurma as turma, c.disciplinaNome as disciplina, c.cursoNome as curso, p.CourseHorario as turno, p.TeacherName as professor FROM
+				".$table_grade_matriculados." as m, 
+				".$table_grade_curricular." as c,
+				".$table_grade_professores." as p
+				WHERE $condicao
+				and m.disciplinacodigo = c.disciplinaCodigo
+				and p.CourseCode = c.disciplinaCodigo
+				and m.disciplinaturma = p.CourseTurma
+				and m.semestre = '".SEMESTRE."'
+				and c.estagio = 0
+				GROUP BY (c.disciplinaCodigo + p.CourseTurma) 
+				ORDER BY p.CourseTurma, c.disciplinaCodigo"; 
+				
+		$sql_result = Database::query($sql);
+		$dados = array();
+		while($dado = Database::fetch_array($sql_result))
+		{
+			$d['codigo'] = $dado['codigo'];
+			$d['turma'] = $dado['turma'];
+			$d['disciplina'] = $dado['disciplina'];
+			$d['turno'] = $dado['turno'];
+			$d['curso'] = $dado['curso'];
+			$d['professor'] = $dado['professor'];
+			
+			$dados[] = $d;
+		}
+		return $dados;
+	}
+
+
 	public function getStudentsTeacher($cpf)
 	{
 		$table_grade_matriculados = Database::get_main_table(TABLE_GRADE_MATRICULADOS);
@@ -89,7 +170,7 @@ define('ENQUETEALUNOPROFESSOR',"8"); // survey_id
 		$table_grade_curricular = Database::get_main_table(TABLE_GRADE_CURRICULAR);
 		$table_grade_professores = Database::get_main_table(TABLE_GRADE_PROFESSORES);
 		
-		$sql = "SELECT c.disciplinaCodigo as codigo, p.CourseTurma as turma, c.disciplinaNome as disciplina, c.cursoNome as curso, p.TeacherName as professor FROM
+		$sql = "SELECT c.disciplinaCodigo as codigo, p.CourseTurma as turma, c.disciplinaNome as disciplina, p.CourseHorario as turno, c.cursoNome as curso, p.TeacherName as professor FROM
 				".$table_grade_matriculados." as m, 
 				".$table_grade_curricular." as c,
 				".$table_grade_professores." as p
@@ -105,10 +186,46 @@ define('ENQUETEALUNOPROFESSOR',"8"); // survey_id
 		return $dado;
 	}
 	
+	public function getLegenda($num)
+	{
+		switch ($num) {
+			case '1':
+				return "Muito Insatisfeito";
+				break;
+			case '2':
+				return "Insatisfeito";
+				break;
+			case '3':
+				return "Pouco Satisfeito";
+				break;
+			case '4':
+				return "Satisfeito";
+				break;
+			case '5':
+				return "Muito Satisfeito";
+				break;
+		}
+	}
+	
 	public function isActiveTeacher($cpf)
 	{
 		return CatolicaDoTocantins::ct_isTeacherOnRegularCourse($cpf);
 	}
+	
+	public function getCoordenacoesResponsaveis($user_id)
+	{
+		$coordenacoes = CatolicaDoTocantins::ct_getAllCoordenacoes();
+		$coord = array();
+		foreach ($coordenacoes as $value) {
+			if(CourseManager::is_course_teacher($user_id, $value['codigo']))
+			{
+				$coord[] = $value['curso'];
+			}
+		}
+		$avaliacoes = self::getCoursesOfResponsaveis($coord);
+		return $avaliacoes; 
+	}
+		
 	public function isViewedHelp($user_id)
 	{
 		$table_avaliacao_help = Database::get_main_table(TABLE_STATISTIC_TRACK_E_AVALIACAO_HELP);
@@ -187,34 +304,61 @@ define('ENQUETEALUNOPROFESSOR',"8"); // survey_id
 		return $dados;
 	}
 
-	// @TODO: trabalhando aqui.
 	public function report_get_list_of_questions_options_score($course_id, $survey_id, $question_id)
 	{
 		$table_survey_question_option = Database::get_course_table(TABLE_SURVEY_QUESTION_OPTION);
+		$table_survey_answer = Database::get_course_table(TABLE_SURVEY_ANSWER);
 		
 		$sql = "SELECT q_option.question_option_id as o_id, q_option.option_text as text FROM $table_survey_question_option as q_option 
 				WHERE q_option.c_id = $course_id
 				AND q_option.survey_id = $survey_id
-				AND q_option.question_id = $question_id"; 
+				AND q_option.question_id = $question_id";  
 		$sql_result = Database::query($sql);
 		$dados = array();
 		while($dado = Database::fetch_array($sql_result))
 		{
 			$d['o_id'] = $dado['o_id'];
 			$d['text'] = $dado['text'];
-			$sql2 = "SELECT a.option_id, a.value, count(a.value) FROM c_survey_answer as a
+			$sql2 = "SELECT a.option_id, a.value, count(a.value) as qtd FROM $table_survey_answer as a
 					WHERE a.c_id = $course_id
 					AND a.survey_id = $survey_id
 					AND a.question_id = $question_id
-					AND a.option_id = 
-					group by a.option_id, a.value";
-			
+					AND a.option_id = " . $dado['o_id'] ."
+					group by a.option_id, a.value"; 
+			$sql_result2 = Database::query($sql2);
+			$score = array();
+			while($s = Database::fetch_array($sql_result2))
+			{
+				$score_option['value'] = $s['value'];
+				$score_option['qtd'] = $s['qtd'];
+				$score[] = $score_option;
+			}
+			$d['score'] = $score;
 			$dados[] = $d;
-		}
+		} 
 		return $dados;
 			
 	}
-	
+
+	public function report_get_list_of_open_answered($course_id, $survey_id, $question_id)
+	{
+		$table_survey_answer = Database::get_course_table(TABLE_SURVEY_ANSWER);
+		
+		$sql = "SELECT a.option_id as answered FROM $table_survey_answer as a
+				WHERE a.c_id = $course_id
+				AND a.survey_id = $survey_id
+				AND a.question_id = $question_id
+				AND a.option_id <> ''"; 
+		$sql_result = Database::query($sql);
+		$dados = array();
+		while($dado = Database::fetch_array($sql_result))
+		{
+			$d['opiniao'] = $dado['answered'];
+			$dados[] = $d;
+		} 
+		return $dados;
+	}
+
 	public function report_get_qtd_unsurvey($curso)
 	{
 		$table_grade_matriculados = Database::get_main_table(TABLE_GRADE_MATRICULADOS);
@@ -362,4 +506,60 @@ define('ENQUETEALUNOPROFESSOR',"8"); // survey_id
 		echo '</div>';
 	}
 
+	public function display_graph_pizza_score($dados, $chart)
+	{
+		$htmlHeadXtra[] = api_get_js('jqplot/jquery.jqplot.min.js');
+		$htmlHeadXtra[] = api_get_js('jqplot/plugins/jqplot.pieRenderer.min.js');
+		$htmlHeadXtra[] = api_get_js('jqplot/plugins/jqplot.donutRenderer.min.js');
+		$htmlHeadXtra[] = api_get_css(api_get_path(WEB_LIBRARY_PATH).'javascript/jqplot/jquery.jqplot.min.css');
+
+		$session = array();
+		$session_list = SessionManager::get_session_by_course($course_code);
+		
+		$total_participantes = 0;
+		foreach ($dados as $d) {
+			$total_participantes += $d['qtd'];
+		}
+
+		$legenda = array();
+		for($i = 0; $i < 5; $i++) {
+			$d['value'] = $i+1;
+			$d['qtd'] = 0;
+			$legenda[$i+1] = $d;
+		}
+
+		foreach ($dados as $d) {
+			$quota_percentage = round($d['qtd']/$total_participantes, 2)*100;
+			$legenda[$d['value']]['qtd'] = $quota_percentage;
+		}
+
+		for($i = 0; $i < 5; $i++) {
+			$session[] = array(addslashes(self::getLegenda($i+1)), $legenda[$i+1]['qtd']);
+		}
+						
+		$quota_data = json_encode($session);
+		
+		$htmlHeadXtra[] = "
+		<script>
+		$(document).ready(function(){
+		  var data = ".$quota_data.";
+		  var plot1 = jQuery.jqplot ('chart".$chart."', [data], {
+		  	  title:'Participantes: ".$total_participantes."',
+		      seriesDefaults: {
+		        // Make this a pie chart
+		        renderer: jQuery.jqplot.PieRenderer,
+		        rendererOptions: {
+		          // Put data labels on the pie slices.
+		          // By default, labels show the percentage of the slice.
+		          showDataLabels: true
+		        }
+		      },
+		      legend: { show:true, location: 'e' }
+		    }
+		  );
+		});
+		</script>";
+		
+		return $htmlHeadXtra;
+	}
  }

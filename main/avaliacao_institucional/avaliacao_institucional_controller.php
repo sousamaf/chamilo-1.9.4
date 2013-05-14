@@ -42,7 +42,7 @@ class AvaliacaoInstitucionalController { // extends Controller {
 			$data['msg'] = $msg;
 		}
 		if(AvaliacaoInstitucional::isViewedHelp($user_id)) {
-			$data['avaliacao_view'] = 'list';
+			$data['avaliacao_view'] = 'report';
 		}
 		else {
 			$data['avaliacao_view'] = 'help';
