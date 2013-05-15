@@ -45,7 +45,7 @@ echo '</div>';
 // block dashboard view
 if (isset($avaliacao_view) && $avaliacao_view == 'report') {
 	$surveys = array();
-	if ((AvaliacaoInstitucional::isActiveTeacher($cpf) && AvaliacaoInstitucional::isSurveyDone($user_id, ENQUETEPROFESSOR)) )//OR ((AvaliacaoInstitucional::isActiveStudent($cpf) && AvaliacaoInstitucional::isAllSurveyDone($user_id, $cpf))))
+	if ((AvaliacaoInstitucional::isActiveTeacher($cpf) && AvaliacaoInstitucional::isSurveyDone($user_id, ENQUETEPROFESSOR)) OR (AvaliacaoInstitucional::isGestor($user_id)) ) //OR ((AvaliacaoInstitucional::isActiveStudent($cpf) && AvaliacaoInstitucional::isAllSurveyDone($user_id, $cpf))))
 	{
 		$avaliacoes = array(); 
 		$link_avaliacao = array();
@@ -77,7 +77,7 @@ if (isset($avaliacao_view) && $avaliacao_view == 'report') {
 				
 		$survey_questions = AvaliacaoInstitucional::report_get_list_of_questions($survey_code);
 			// blocks for column 2
-			if (count($survey_questions) > 0) {
+			if ( (count($survey_questions) > 0) OR (count($link_avaliacao_coord) > 1)) {
 				// blocks for column 1
 				echo '<ul id="column1" class="column">';
 					if(count($link_avaliacao) > 0)

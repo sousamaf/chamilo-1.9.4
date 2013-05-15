@@ -52,6 +52,24 @@ define('ENQUETEALUNOPROFESSOR',"8"); // survey_id
 		}
 	}
 
+	public function isGestor($user_id)
+	{
+		$usuariosEspeciais = array();
+		$usuariosEspeciais[] = "2403"; // yara cpa
+		$usuariosEspeciais[] = "4303"; // lucas nupad
+		$usuariosEspeciais[] = "2413"; // rachel nadime
+		$usuariosEspeciais[] = "1368"; // clarete
+		$usuariosEspeciais[] = "537"; // maria rosa
+		$usuariosEspeciais[] = "5305"; // ouviroria
+		if(in_array($user_id, $usuariosEspeciais))
+		{
+			return true;
+		}else {
+			return false;
+		}
+	
+	}
+	
 	public function getCoursesOfTeacher($cpf)
 	{
 		$table_grade_matriculados = Database::get_main_table(TABLE_GRADE_MATRICULADOS);
